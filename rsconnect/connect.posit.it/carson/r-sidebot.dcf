@@ -1,0 +1,11 @@
+name: r-sidebot
+title:
+username: carson
+account: carson
+server: connect.posit.it
+envVars: OPENAI_API_KEY
+hostUrl: https://connect.posit.it/__api__
+appId: 17313
+bundleId: 1098031
+url: https://connect.posit.it/r-sidebot/
+version: 1

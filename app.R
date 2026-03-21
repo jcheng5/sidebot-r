@@ -9,14 +9,21 @@ library(ggridges)
 library(dplyr)
 library(querychat)
 
+# Implicit dependencies needed by connect
+if (FALSE) {
+  library(reticulate)
+  library(magick)
+}
+
+
 tips <- readr::read_csv(here("tips.csv")) |>
   mutate(percent = round((tip / total_bill) * 100, 2))
 
-querychat_handle <- querychat_init(
+qc <- QueryChat$new(
   tips,
-  # This is the greeting that should initially appear in the sidebar when the app
-  # loads.
-  greeting = readLines(here("greeting.md"), warn = FALSE)
+  "tips",
+  greeting = here("greeting.md"),
+  extra_instructions = here("prompt.md")
 )
 
 icon_explain <- tags$img(src = "stars.svg")
@@ -25,7 +32,7 @@ ui <- page_sidebar(
   style = "background-color: rgb(248, 248, 248);",
   title = "Restaurant tipping",
   includeCSS(here("styles.css")),
-  sidebar = querychat_sidebar("chat"),
+  sidebar = qc$sidebar(),
   useBusyIndicators(),
 
   # 🏷️ Header
@@ -125,27 +132,24 @@ ui <- page_sidebar(
 server <- function(input, output, session) {
   # ✨ querychat ✨ -----------------------------------------------------------
 
-  querychat <- querychat_server("chat", querychat_handle)
+  qc_vals <- qc$server()
 
   # We don't normally need the chat object, but in this case, we want it so we
   # can pass it to explain_plot
-  chat <- querychat$chat
+  chat <- qc_vals$client
 
   # The reactive data frame. Either returns the entire dataset, or filtered by
   # whatever querychat decided.
-  #
-  # querychat$df is already a reactive data frame, we're just creating an alias
-  # to it called `tips_data` so the code below can be more readable.
-  tips_data <- querychat$df
+  tips_data <- qc_vals$df
 
   # 🏷️ Header outputs --------------------------------------------------------
 
   output$show_title <- renderText({
-    querychat$title()
+    qc_vals$title()
   })
 
   output$show_query <- renderText({
-    querychat$sql()
+    qc_vals$sql()
   })
 
   # 🎯 Value box outputs -----------------------------------------------------

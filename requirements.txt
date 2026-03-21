@@ -1,0 +1,3 @@
+plotly
+kaleido<1
+numpy

@@ -1,0 +1,10 @@
+name: r-sidebot
+title:
+username: csievert
+account: csievert
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 16950271
+bundleId: 11738892
+url: https://csievert.shinyapps.io/r-sidebot/
+version: 1

@@ -3,3 +3,5 @@
 .RData
 .Ruserdata
 .Renviron
+node_modules/
+test-results/
